@@ -8,3 +8,4 @@ Lab3 - wprowadzenie do EF
 
 Lab4 - ściąganie stron internetowych
 
+Lab5 - EF w .NET Framework, TPH, TPT, TPC, ES, TS
