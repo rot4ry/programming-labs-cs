@@ -19,12 +19,6 @@ namespace Lab7
             InitializeComponent();
          
         }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-            Console.WriteLine("Dupa");
-        }
-
         
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
