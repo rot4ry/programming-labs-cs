@@ -9,53 +9,56 @@ namespace Lab1
     {
         public void Select(SqlConnection connection)
         {
-            var query = "SELECT * FROM Customers";
-            var command = new SqlCommand(query, connection);
-            var reader = command.ExecuteReader();
+            var query = "SELECT * FROM Region";
+            SqlCommand command = new SqlCommand(query, connection);
+            SqlDataReader reader = command.ExecuteReader();
 
             while (reader.Read())
             {
-                //  Console.WriteLine(reader.["CompanyName"]);
+                Console.WriteLine($"{ reader["RegionID"] } { reader["RegionDescription"]}");
             }
+            reader.Close();
+
+            Console.WriteLine();
         }
 
         public void Insert(SqlConnection connection, int id, string description)
         {
-            var query = "INSERT INTO region(regionId, regionDescription)"
-                + "VALUES (@id, '@description')";
+            var query = "INSERT INTO Region(RegionID, RegionDescription) " +
+                        "VALUES (@RegionID, @RegionDescription)";
 
             var command = new SqlCommand(query, connection);
-            command.Parameters.AddWithValue("@id", id);
-            command.Parameters.AddWithValue("@description", description);
+            command.Parameters.AddWithValue("RegionID", id);
+            command.Parameters.AddWithValue("RegionDescription", description);
 
             var affected = command.ExecuteNonQuery();
-            Console.WriteLine($"{affected} rows affected");
+            Console.WriteLine($"{affected} rows affected[INSERT]");
         }
 
-        public void Update(SqlConnection connection, int id, string description)
+        public void Update(SqlConnection connection, int id, string updatedDescription)
         {
-            var query = "UPDATE region(regionId, regionDescription)"
-                + $"SET regionDescription = {description}"
-                + $"WHERE @id = {id}";
+            string query =  "UPDATE Region " +
+                            "SET RegionDescription=@RegionDescription " +
+                            "WHERE RegionID=@RegionID";
 
-            var command = new SqlCommand(query, connection);
-            command.Parameters.AddWithValue("@id", id);
-            command.Parameters.AddWithValue("@description", description);
+            SqlCommand command = new SqlCommand(query, connection);
+            command.Parameters.AddWithValue("RegionID", id);
+            command.Parameters.AddWithValue("RegionDescription", updatedDescription);
 
             var affected = command.ExecuteNonQuery();
-            Console.WriteLine($"{affected} rows affected");
-        }
+            Console.WriteLine($"{affected} rows affected [UPDATE]");
+        }   
 
         public void Delete(SqlConnection connection, int id)
         {
-            var query = "DELETE FROM region(regionId, regionDescription)"
-                    + $"WHERE @id = {id}";
+            string query = "DELETE FROM Region WHERE RegionID=@RegionID";
 
-            var command = new SqlCommand(query, connection);
-            command.Parameters.AddWithValue("id", id);
+            SqlCommand command = new SqlCommand(query, connection);
+            command.Parameters.AddWithValue("RegionID", id);
 
             var affected = command.ExecuteNonQuery();
-            Console.WriteLine($"{affected} rows affected");
+            Console.WriteLine($"{affected} rows affected [DELETE]");
         }
     }
 }
+
