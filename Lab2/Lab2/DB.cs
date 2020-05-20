@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Dapper;
+using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Text;
 
 namespace Lab2
@@ -14,6 +16,7 @@ namespace Lab2
             {
                 Console.WriteLine($"{item.RegionId}, {item.RegionDescription}");
             }
+            Console.WriteLine();
         }
 
         public void Insert(IDbConnection connecton, Region region)
@@ -28,11 +31,19 @@ namespace Lab2
                 + "VALUES(@id, @desc)", new { id = id, desc = description });
         }
 
+        public void Update(IDbConnection connection, int id, string description)
+        {
+            connection.Execute("UPDATE Region " +
+                                "SET RegionDescription=@RegionDescription " +
+                                "WHERE RegionId=@RegionId",
+                                new { RegionId = id, RegionDescription = description });
+        }
 
         public void Delete(IDbConnection connection, int id)
         {
-            connection.Execute("DELETE FROM Region(RegionId, RegionDescription")
-                + $"WHERE RegionId = {id}", new { id = id });
+            connection.Execute("DELETE FROM Region WHERE RegionId=@RegionId"
+                                , new { RegionId = id });
+
         }
-    }
+    } 
 }

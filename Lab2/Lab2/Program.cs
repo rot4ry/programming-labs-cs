@@ -16,11 +16,25 @@ namespace Lab2
         static void Main(string[] args) {
 
             var db = new DB();
-            string connectionString = @"abc";
-            var connection = new SqlConnection(connectionString);
+            string connectionString = @"Data Source=DESKTOP-GSQML5J\MYSERVER;
+                                        Initial Catalog = Northwind;
+                                        Integrated Security=True;
+                                        Connect Timeout=30;
+                                        Encrypt=False;
+                                        TrustServerCertificate=False;
+                                        ApplicationIntent=ReadWrite;
+                                        MultiSubnetFailover=False";
+            using var connection = new SqlConnection(connectionString);
+
+            
             db.Select(connection);
-            db.Insert(connection, new Region { RegionId = 555, RegionDescription = "asd"});
-            db.Insert(connection, 10, "overload");
+            db.Insert(connection, new Region { RegionId = 115, RegionDescription = "asd"});
+            db.Select(connection);
+            db.Insert(connection, 13, "overload");
+            db.Select(connection);
+            db.Update(connection, 13, "updated");
+            db.Select(connection);
+            db.Delete(connection, 13);
         }
     }
 }
