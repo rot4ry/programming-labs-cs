@@ -12,7 +12,9 @@ namespace Lab8
     {
         public double Money { get; set; }
         public Point Coords { get; set; }
-
+        public bool isInfected { get; set; } = false;
+        public bool isSoldier { get; set; } = false;
+        public bool isCheckedThisRound { get; set; } = false;
 
         private Image image = Lab8.Properties.Resources.human;
 

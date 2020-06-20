@@ -19,8 +19,8 @@ namespace Lab8
         private List<Human> Humans = new List<Human>();
         private List<Soldier> Soldiers = new List<Soldier>();
         private List<Zombie> Zombies = new List<Zombie>();
-        
-        
+
+
         public MainGameWindow()
         {
             InitializeComponent();
@@ -43,22 +43,34 @@ namespace Lab8
         {
             SetPointList();
         }
-        
+
         private void nextRoundButton_Click(object sender, EventArgs e)
         {
             _ROUND++;
             roundCounterLabel.Text = _ROUND.ToString();
 
+            Console.WriteLine($"Iteration:{_ROUND}");
+            Console.WriteLine($"Zombies: {Zombies.Count()}");
+            Console.WriteLine($"Humans: {Humans.Count()}");
+            Console.WriteLine($"Soldiers: {Soldiers.Count()}");
+            Console.WriteLine($"Sum: {Humans.Count()+Zombies.Count()+Soldiers.Count()}");
+            Console.WriteLine();
+
             int panelSizeX = 420;
             int panelSizeY = 420;
             int humanSize = 40;
             int movementRange;
+            
+            HumansVsZombies();
+            HumansVsSoldiers();
+            SoldiersVsZombies();
 
-
-            //MANAGE HUMANS
+            //MOVE HUMANS
             Random hRand = new Random(new Random().Next(100));
             foreach (Human human in Humans)
             {
+                human.isCheckedThisRound = false;
+
                 if (human.Money == (double)0)
                     continue;
 
@@ -67,7 +79,7 @@ namespace Lab8
                     int charX = human.Location.X;
                     int charY = human.Location.Y;
                     int x, y;
-                    movementRange = hRand.Next(50, 100);
+                    movementRange = hRand.Next(10, 40);
 
                     do
                     {
@@ -83,15 +95,15 @@ namespace Lab8
                     human.MoveTo(newLocation);
                 }
             }
-
-            //MANAGE SOLDIERS
+            //MOVE SOLDIERS
             Random sRand = new Random(new Random().Next(100));
             foreach (Soldier soldier in Soldiers)
             {
+
                 int charX = soldier.Location.X;
                 int charY = soldier.Location.Y;
                 int x, y;
-                movementRange = sRand.Next(70, 120);
+                movementRange = sRand.Next(20, 60);
 
                 do
                 {
@@ -106,15 +118,15 @@ namespace Lab8
                 Point newLocation = new Point(charX + x, charY + y);
                 soldier.MoveTo(newLocation);
             }
-
-            //MANAGE ZOMBIES
+            //MOVE ZOMBIES
             Random zRand = new Random(new Random().Next(100));
             foreach (Zombie zombie in Zombies)
             {
+
                 int charX = zombie.Location.X;
                 int charY = zombie.Location.Y;
                 int x, y;
-                movementRange = zRand.Next(20, 50);
+                movementRange = zRand.Next(10, 30);
 
                 do
                 {
@@ -127,10 +139,11 @@ namespace Lab8
                 } while (charY + y < 0 || charY + y > panelSizeY - humanSize);
 
                 Point newLocation = new Point(charX + x, charY + y);
-                zombie.VirusDecrease();
-                Console.WriteLine(zombie.VirusLeft);
                 
-                if(zombie.VirusLeft == 0)
+                zombie.MoveTo(newLocation);
+                zombie.VirusDecrease();
+
+                if (zombie.VirusLeft == 0)
                 {
                     Human curedHuman = new Human(zombie.Money, zombie.Coords);
                     Humans.Add(curedHuman);
@@ -138,15 +151,191 @@ namespace Lab8
                     gameMapPanel.Controls.Remove(zombie);
                     gameMapPanel.Controls.Add(curedHuman);
                 }
-                
-                else 
-                    zombie.MoveTo(newLocation);
             }
 
-            Zombies = Zombies.Where(x => x.VirusLeft > 0).ToList<Zombie>();
 
+            Zombies = Zombies.Where(x => x.VirusLeft > 0).ToList<Zombie>();
+            
             gameMapPanel.Show();
         }
+
+        private void HumansVsZombies()
+        {
+            int humanSize = 40;
+            List<Human> hVz = new List<Human>();
+
+            foreach (Zombie zombie in Zombies)
+            {
+                int LeftBorder = zombie.Location.X - humanSize + 1;
+                int RightBorder = zombie.Location.X + humanSize - 1;
+                int TopBorder = zombie.Location.Y - humanSize + 1;
+                int BottomBorder = zombie.Location.Y + humanSize - 1;
+
+                foreach (Human human in Humans)
+                {
+                    int humanX = human.Location.X;
+                    int humanY = human.Location.Y;
+
+                    if (
+                        Math.Sqrt(
+                            Math.Pow((humanX - zombie.Location.X), 2)
+                          + Math.Pow((humanY - zombie.Location.Y), 2)) <= 2 * humanSize)
+                    {
+                        //collision happens
+                        if (LeftBorder      <=      humanX &&
+                            RightBorder     >=      humanX &&
+                            TopBorder       <=      humanY &&
+                            BottomBorder    >=      humanY &&
+                            human.isInfected == false
+                           )
+                        {
+                            hVz.Add(human);
+                            human.isInfected = true;
+                        }
+                        else 
+                            continue;
+                    }
+                }
+            }
+                    
+            foreach (Human character in hVz)
+            {
+                Zombie newZombie = new Zombie(character.Money, character.Coords, new Random().NextDouble() * 200, new Random().Next(3,7));
+                Humans.Remove(character);
+                gameMapPanel.Controls.Remove(character);
+
+                Zombies.Add(newZombie);
+                gameMapPanel.Controls.Add(newZombie);
+            }
+            hVz.Clear();
+        }
+        private void HumansVsSoldiers()
+        {
+            int humanSize = 40;
+            double ticketValue = 10.65;
+
+            List<Human> hVs = new List<Human>();
+
+            foreach (Soldier soldier in Soldiers)
+            {
+                int LeftBorder      = soldier.Location.X - humanSize + 1;
+                int RightBorder     = soldier.Location.X + humanSize - 1;
+                int TopBorder       = soldier.Location.Y - humanSize + 1;
+                int BottomBorder    = soldier.Location.Y + humanSize - 1;
+
+                foreach (Human human in Humans)
+                {
+                    int humanX = human.Location.X;
+                    int humanY = human.Location.Y;
+
+                    if (
+                        Math.Sqrt(
+                            Math.Pow((humanX - soldier.Location.X), 2)
+                          + Math.Pow((humanY - soldier.Location.Y), 2)) <= 2 * humanSize)
+                    {
+                        //collision happens
+                        if (LeftBorder      <= humanX &&
+                            RightBorder     >= humanX &&
+                            TopBorder       <= humanY &&
+                            BottomBorder    >= humanY &&
+                            human.isSoldier == false &&
+                            human.isCheckedThisRound == false
+                           )
+                        {
+                            human.isCheckedThisRound = true;
+                            if (human.Money >= ticketValue)
+                            {
+                                human.Money -= ticketValue;
+                            }
+                            else
+                            {
+                                human.isSoldier = true;
+                                hVs.Add(human);
+                            }
+                        }
+                    }
+                }
+            }
+
+            foreach (Human character in hVs)
+            {
+                Soldier newSoldier = new Soldier(character.Money, character.Coords, new Random().NextDouble() * 100);
+                Humans.Remove(character);
+                gameMapPanel.Controls.Remove(character);
+
+                Soldiers.Add(newSoldier);
+                gameMapPanel.Controls.Add(newSoldier);
+            }
+        }
+        private void SoldiersVsZombies()
+        {
+            int humanSize = 40;
+
+            List<Soldier> zombified = new List<Soldier>();
+            List<Zombie> cured = new List<Zombie>();
+
+            foreach (Soldier soldier in Soldiers)
+            {
+                int LeftBorder      = soldier.Location.X - humanSize + 1;
+                int RightBorder     = soldier.Location.X + humanSize - 1;
+                int TopBorder       = soldier.Location.Y - humanSize + 1;
+                int BottomBorder    = soldier.Location.Y + humanSize - 1;
+
+                foreach (Zombie zombie in Zombies)
+                {
+                    int zombieX = zombie.Location.X;
+                    int zombieY = zombie.Location.Y;
+
+                    if (
+                        Math.Sqrt(
+                            Math.Pow((zombieX - soldier.Location.X), 2)
+                          + Math.Pow((zombieY - soldier.Location.Y), 2)) <= 2 * humanSize)
+                    {
+                        //collision happens
+                        if (LeftBorder      <= zombieX &&
+                            RightBorder     >= zombieX &&
+                            TopBorder       <= zombieY &&
+                            BottomBorder    >= zombieY) 
+                        {
+                            if(soldier.Endurance >= zombie.Strength && zombie.isCured == false)
+                            {
+                                zombie.isCured = true;
+                                cured.Add(zombie);
+                            }
+                            else if(soldier.Endurance < zombie.Strength && soldier.isInfected == false)
+                            {
+                                soldier.isInfected = true;
+                                zombified.Add(soldier);
+                            }
+                        }
+                        else
+                            continue;
+                    }
+                }
+            }
+            
+            foreach (Soldier character in zombified)
+            {
+                Zombie newZombie = new Zombie(character.Money, character.Coords, new Random().NextDouble() * 200, new Random().Next(3, 7));
+                Soldiers.Remove(character);
+                gameMapPanel.Controls.Remove(character);
+
+                Zombies.Add(newZombie);
+                gameMapPanel.Controls.Add(newZombie);
+            }
+            
+            foreach (Zombie character in cured)
+            {
+                Human curedHuman = new Human(character.Money, character.Coords);
+                Zombies.Remove(character);
+                gameMapPanel.Controls.Remove(character);
+
+                Humans.Add(curedHuman);
+                gameMapPanel.Controls.Add(curedHuman);
+            }
+        }
+
+
 
         private void gameResetButton_Click(object sender, EventArgs e)
         {
@@ -160,7 +349,7 @@ namespace Lab8
             Humans.Clear();
             Soldiers.Clear();
             Zombies.Clear();
-            
+
             gameMapPanel.Controls.Clear();
 
             SetPointList();
@@ -174,7 +363,7 @@ namespace Lab8
             also, this massively reduces amount of characters (from 170k to ~30-40)
             that can be on the map
             */
-            
+
             /*
             if you don't care about characters colliding,
             comment this    |
@@ -202,8 +391,8 @@ namespace Lab8
             int zombieQuantity = Convert.ToInt32(zombiesQTB.Text);
 
             Random randomizer = new Random();
-            
-            for(int i = 0; i < humanQuantity; i++)
+
+            for (int i = 0; i < humanQuantity; i++)
             {
                 double money = (double)randomizer.Next(0, 1000);
                 Point spot = freeSpotsOnTheMap[randomizer.Next(freeSpotsOnTheMap.Count())];
@@ -214,8 +403,8 @@ namespace Lab8
                 gameMapPanel.Controls.Add(human);
                 Humans.Add(human);
             }
-               
-            for(int i = 0; i < soldierQuantity; i++)
+
+            for (int i = 0; i < soldierQuantity; i++)
             {
                 double money = (double)randomizer.Next(100, 1000) / randomizer.Next(10, 50);
                 Point spot = freeSpotsOnTheMap[randomizer.Next(freeSpotsOnTheMap.Count())];
@@ -228,12 +417,12 @@ namespace Lab8
                 Soldiers.Add(soldier);
             }
 
-            for(int i = 0; i < zombieQuantity; i++)
+            for (int i = 0; i < zombieQuantity; i++)
             {
                 double money = (double)randomizer.Next(100, 1000) / randomizer.Next(10, 50);
                 Point spot = freeSpotsOnTheMap[randomizer.Next(freeSpotsOnTheMap.Count())];
-                double strength  = randomizer.NextDouble() * 200;
-                
+                double strength = randomizer.NextDouble() * 200;
+
                 SetAvailableSpots(spot);
 
                 Zombie zombie = new Zombie(money, spot, strength, new Random(new Random().Next(100)).Next(3, 7));
@@ -243,3 +432,4 @@ namespace Lab8
         }
     }
 }
+

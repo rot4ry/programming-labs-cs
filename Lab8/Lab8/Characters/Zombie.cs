@@ -22,6 +22,8 @@ namespace Lab8
                  }
 
         private int virusLeft;
+        public bool isCured { get; set; } = false;
+
         public int VirusLeft {
             get 
             {

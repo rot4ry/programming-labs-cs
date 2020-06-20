@@ -11,7 +11,7 @@ namespace Lab8
     public class Soldier : Human
     {
         public double Endurance { get; set; }
-
+        
         public Soldier(double money, Point coords, double endurance) : base(money, coords, "soldier")
         {
             Endurance = endurance;
