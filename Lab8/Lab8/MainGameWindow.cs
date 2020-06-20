@@ -48,14 +48,7 @@ namespace Lab8
         {
             _ROUND++;
             roundCounterLabel.Text = _ROUND.ToString();
-
-            Console.WriteLine($"Iteration:{_ROUND}");
-            Console.WriteLine($"Zombies: {Zombies.Count()}");
-            Console.WriteLine($"Humans: {Humans.Count()}");
-            Console.WriteLine($"Soldiers: {Soldiers.Count()}");
-            Console.WriteLine($"Sum: {Humans.Count()+Zombies.Count()+Soldiers.Count()}");
-            Console.WriteLine();
-
+            
             int panelSizeX = 420;
             int panelSizeY = 420;
             int humanSize = 40;
@@ -73,7 +66,7 @@ namespace Lab8
 
                 if (human.Money == (double)0)
                     continue;
-
+                
                 else
                 {
                     int charX = human.Location.X;
@@ -122,7 +115,6 @@ namespace Lab8
             Random zRand = new Random(new Random().Next(100));
             foreach (Zombie zombie in Zombies)
             {
-
                 int charX = zombie.Location.X;
                 int charY = zombie.Location.Y;
                 int x, y;
@@ -146,19 +138,22 @@ namespace Lab8
                 if (zombie.VirusLeft == 0)
                 {
                     Human curedHuman = new Human(zombie.Money, zombie.Coords);
-                    Humans.Add(curedHuman);
+                    curedHuman.MouseEnter += human_MouseEnter;
+                    curedHuman.MouseLeave += human_MouseLeave;
 
+                    Humans.Add(curedHuman);
+                    
+                    zombie.MouseEnter -= zombie_MouseEnter;
+                    zombie.MouseLeave -= zombie_MouseLeave;
                     gameMapPanel.Controls.Remove(zombie);
                     gameMapPanel.Controls.Add(curedHuman);
                 }
             }
 
-
             Zombies = Zombies.Where(x => x.VirusLeft > 0).ToList<Zombie>();
             
             gameMapPanel.Show();
         }
-
         private void HumansVsZombies()
         {
             int humanSize = 40;
@@ -201,6 +196,11 @@ namespace Lab8
             foreach (Human character in hVz)
             {
                 Zombie newZombie = new Zombie(character.Money, character.Coords, new Random().NextDouble() * 200, new Random().Next(3,7));
+                newZombie.MouseEnter += zombie_MouseEnter;
+                newZombie.MouseLeave += zombie_MouseLeave;
+
+                character.MouseEnter -= human_MouseEnter;
+                character.MouseLeave -= human_MouseLeave;
                 Humans.Remove(character);
                 gameMapPanel.Controls.Remove(character);
 
@@ -212,7 +212,7 @@ namespace Lab8
         private void HumansVsSoldiers()
         {
             int humanSize = 40;
-            double ticketValue = 10.65;
+            double ticketValue = 100.65;
 
             List<Human> hVs = new List<Human>();
 
@@ -260,6 +260,11 @@ namespace Lab8
             foreach (Human character in hVs)
             {
                 Soldier newSoldier = new Soldier(character.Money, character.Coords, new Random().NextDouble() * 100);
+                newSoldier.MouseEnter += soldier_MouseEnter;
+                newSoldier.MouseLeave += soldier_MouseLeave;
+
+                character.MouseEnter -= human_MouseEnter;
+                character.MouseLeave -= human_MouseLeave;
                 Humans.Remove(character);
                 gameMapPanel.Controls.Remove(character);
 
@@ -317,6 +322,11 @@ namespace Lab8
             foreach (Soldier character in zombified)
             {
                 Zombie newZombie = new Zombie(character.Money, character.Coords, new Random().NextDouble() * 200, new Random().Next(3, 7));
+                newZombie.MouseEnter += zombie_MouseEnter;
+                newZombie.MouseLeave += zombie_MouseLeave;
+                
+                character.MouseEnter -= soldier_MouseEnter;
+                character.MouseLeave -= soldier_MouseLeave;
                 Soldiers.Remove(character);
                 gameMapPanel.Controls.Remove(character);
 
@@ -327,6 +337,11 @@ namespace Lab8
             foreach (Zombie character in cured)
             {
                 Human curedHuman = new Human(character.Money, character.Coords);
+                curedHuman.MouseEnter += human_MouseEnter;
+                curedHuman.MouseLeave += human_MouseLeave;
+
+                character.MouseEnter -= zombie_MouseEnter;
+                character.MouseLeave -= zombie_MouseLeave;
                 Zombies.Remove(character);
                 gameMapPanel.Controls.Remove(character);
 
@@ -334,8 +349,6 @@ namespace Lab8
                 gameMapPanel.Controls.Add(curedHuman);
             }
         }
-
-
 
         private void gameResetButton_Click(object sender, EventArgs e)
         {
@@ -382,6 +395,9 @@ namespace Lab8
                                 V
             */
             //freeSpotsOnTheMap.Remove(spot);
+            /*
+             * or don't
+             */
         }
 
         private void addCharactersButton_Click(object sender, EventArgs e)
@@ -400,6 +416,9 @@ namespace Lab8
                 SetAvailableSpots(spot);
 
                 Human human = new Human(money, spot);
+                human.MouseEnter += human_MouseEnter;
+                human.MouseLeave += human_MouseLeave;
+
                 gameMapPanel.Controls.Add(human);
                 Humans.Add(human);
             }
@@ -413,6 +432,9 @@ namespace Lab8
                 SetAvailableSpots(spot);
 
                 Soldier soldier = new Soldier(money, spot, endurance);
+                soldier.MouseEnter += soldier_MouseEnter;
+                soldier.MouseLeave += soldier_MouseLeave;
+
                 gameMapPanel.Controls.Add(soldier);
                 Soldiers.Add(soldier);
             }
@@ -426,10 +448,51 @@ namespace Lab8
                 SetAvailableSpots(spot);
 
                 Zombie zombie = new Zombie(money, spot, strength, new Random(new Random().Next(100)).Next(3, 7));
+                zombie.MouseEnter += zombie_MouseEnter;
+                zombie.MouseLeave += zombie_MouseLeave;
+                
                 gameMapPanel.Controls.Add(zombie);
                 Zombies.Add(zombie);
             }
         }
+
+        private void human_MouseEnter(object sender, EventArgs e)
+        {
+            Human pointedAt = (Human)sender;
+            infoBox.Text =  $"Class:            {pointedAt.GetType().Name}\n" +
+                            $"Money:            {pointedAt.Money}\n" +
+                            $"Coords:           {pointedAt.Coords.X}/{pointedAt.Coords.Y}";
+        }
+        private void human_MouseLeave(object sender, EventArgs e)
+        {
+            infoBox.Text = "";
+        }
+
+        private void soldier_MouseEnter(object sender, EventArgs e)
+        {
+            Soldier pointedAt = (Soldier)sender;
+            infoBox.Text =  $"Class:            {pointedAt.GetType().Name}\n" +
+                            $"Money:            {pointedAt.Money}\n" +
+                            $"Endurance:        {pointedAt.Endurance}\n" +
+                            $"Coords:           {pointedAt.Coords.X}/{pointedAt.Coords.Y}";
+        }
+        private void soldier_MouseLeave(object sender, EventArgs e)
+        {
+            infoBox.Text = "";
+        }
+
+        private void zombie_MouseEnter(object sender, EventArgs e)
+        {
+            Zombie pointedAt = (Zombie)sender;
+            infoBox.Text =  $"Class:            {pointedAt.GetType().Name}\n" +
+                            $"Money:            {pointedAt.Money}\n" +
+                            $"Strength:         {pointedAt.Strength}\n" +
+                            $"Zombie for        {pointedAt.VirusLeft} rounds\n" +
+                            $"Coords:           {pointedAt.Coords.X}/{pointedAt.Coords.Y}";
+        }
+        private void zombie_MouseLeave(object sender, EventArgs e)
+        {
+            infoBox.Text = "";
+        }
     }
 }
-

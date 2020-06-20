@@ -39,8 +39,9 @@
             this.addCharactersButton = new System.Windows.Forms.Button();
             this.gameResetButton = new System.Windows.Forms.Button();
             this.gameControlsGB = new System.Windows.Forms.GroupBox();
-            this.nextRoundButton = new System.Windows.Forms.Button();
             this.roundCounterLabel = new System.Windows.Forms.Label();
+            this.nextRoundButton = new System.Windows.Forms.Button();
+            this.infoBox = new System.Windows.Forms.RichTextBox();
             this.gameSettingsGB.SuspendLayout();
             this.gameControlsGB.SuspendLayout();
             this.SuspendLayout();
@@ -71,7 +72,7 @@
             this.gameSettingsGB.ForeColor = System.Drawing.Color.IndianRed;
             this.gameSettingsGB.Location = new System.Drawing.Point(439, 13);
             this.gameSettingsGB.Name = "gameSettingsGB";
-            this.gameSettingsGB.Size = new System.Drawing.Size(349, 305);
+            this.gameSettingsGB.Size = new System.Drawing.Size(349, 221);
             this.gameSettingsGB.TabIndex = 1;
             this.gameSettingsGB.TabStop = false;
             this.gameSettingsGB.Text = "Game settings";
@@ -79,7 +80,7 @@
             // zombiesQTB
             // 
             this.zombiesQTB.Font = new System.Drawing.Font("Microsoft Sans Serif", 36F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.zombiesQTB.Location = new System.Drawing.Point(10, 224);
+            this.zombiesQTB.Location = new System.Drawing.Point(10, 151);
             this.zombiesQTB.MinimumSize = new System.Drawing.Size(156, 59);
             this.zombiesQTB.Name = "zombiesQTB";
             this.zombiesQTB.Size = new System.Drawing.Size(156, 62);
@@ -90,7 +91,7 @@
             // soldiersQTB
             // 
             this.soldiersQTB.Font = new System.Drawing.Font("Microsoft Sans Serif", 36F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.soldiersQTB.Location = new System.Drawing.Point(10, 139);
+            this.soldiersQTB.Location = new System.Drawing.Point(187, 54);
             this.soldiersQTB.MinimumSize = new System.Drawing.Size(156, 59);
             this.soldiersQTB.Name = "soldiersQTB";
             this.soldiersQTB.Size = new System.Drawing.Size(156, 62);
@@ -114,7 +115,7 @@
             this.label3.BackColor = System.Drawing.Color.LightGreen;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label3.ForeColor = System.Drawing.SystemColors.WindowFrame;
-            this.label3.Location = new System.Drawing.Point(6, 201);
+            this.label3.Location = new System.Drawing.Point(6, 128);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(160, 20);
             this.label3.TabIndex = 4;
@@ -126,7 +127,7 @@
             this.label2.BackColor = System.Drawing.Color.LightGreen;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.ForeColor = System.Drawing.SystemColors.WindowFrame;
-            this.label2.Location = new System.Drawing.Point(6, 116);
+            this.label2.Location = new System.Drawing.Point(183, 31);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(160, 20);
             this.label2.TabIndex = 3;
@@ -149,9 +150,9 @@
             // 
             this.addCharactersButton.BackColor = System.Drawing.Color.OldLace;
             this.addCharactersButton.ForeColor = System.Drawing.Color.Firebrick;
-            this.addCharactersButton.Location = new System.Drawing.Point(194, 31);
+            this.addCharactersButton.Location = new System.Drawing.Point(187, 175);
             this.addCharactersButton.Name = "addCharactersButton";
-            this.addCharactersButton.Size = new System.Drawing.Size(149, 58);
+            this.addCharactersButton.Size = new System.Drawing.Size(156, 35);
             this.addCharactersButton.TabIndex = 1;
             this.addCharactersButton.Text = "Add characters";
             this.addCharactersButton.UseVisualStyleBackColor = false;
@@ -161,9 +162,9 @@
             // 
             this.gameResetButton.BackColor = System.Drawing.Color.OldLace;
             this.gameResetButton.ForeColor = System.Drawing.Color.Firebrick;
-            this.gameResetButton.Location = new System.Drawing.Point(194, 95);
+            this.gameResetButton.Location = new System.Drawing.Point(187, 134);
             this.gameResetButton.Name = "gameResetButton";
-            this.gameResetButton.Size = new System.Drawing.Size(149, 58);
+            this.gameResetButton.Size = new System.Drawing.Size(156, 35);
             this.gameResetButton.TabIndex = 0;
             this.gameResetButton.Text = "Reset";
             this.gameResetButton.UseVisualStyleBackColor = false;
@@ -172,17 +173,28 @@
             // gameControlsGB
             // 
             this.gameControlsGB.BackColor = System.Drawing.Color.PaleGoldenrod;
+            this.gameControlsGB.Controls.Add(this.infoBox);
             this.gameControlsGB.Controls.Add(this.roundCounterLabel);
             this.gameControlsGB.Controls.Add(this.nextRoundButton);
             this.gameControlsGB.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.gameControlsGB.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.gameControlsGB.ForeColor = System.Drawing.Color.IndianRed;
-            this.gameControlsGB.Location = new System.Drawing.Point(439, 324);
+            this.gameControlsGB.Location = new System.Drawing.Point(439, 240);
             this.gameControlsGB.Name = "gameControlsGB";
-            this.gameControlsGB.Size = new System.Drawing.Size(349, 106);
+            this.gameControlsGB.Size = new System.Drawing.Size(349, 190);
             this.gameControlsGB.TabIndex = 2;
             this.gameControlsGB.TabStop = false;
             this.gameControlsGB.Text = "Game controls";
+            // 
+            // roundCounterLabel
+            // 
+            this.roundCounterLabel.BackColor = System.Drawing.Color.FloralWhite;
+            this.roundCounterLabel.Location = new System.Drawing.Point(194, 25);
+            this.roundCounterLabel.Name = "roundCounterLabel";
+            this.roundCounterLabel.Size = new System.Drawing.Size(149, 34);
+            this.roundCounterLabel.TabIndex = 1;
+            this.roundCounterLabel.Text = "0";
+            this.roundCounterLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // nextRoundButton
             // 
@@ -190,21 +202,19 @@
             this.nextRoundButton.ForeColor = System.Drawing.Color.Firebrick;
             this.nextRoundButton.Location = new System.Drawing.Point(10, 25);
             this.nextRoundButton.Name = "nextRoundButton";
-            this.nextRoundButton.Size = new System.Drawing.Size(149, 58);
+            this.nextRoundButton.Size = new System.Drawing.Size(149, 34);
             this.nextRoundButton.TabIndex = 0;
             this.nextRoundButton.Text = "Next round";
             this.nextRoundButton.UseVisualStyleBackColor = false;
             this.nextRoundButton.Click += new System.EventHandler(this.nextRoundButton_Click);
             // 
-            // roundCounterLabel
+            // infoBox
             // 
-            this.roundCounterLabel.BackColor = System.Drawing.Color.FloralWhite;
-            this.roundCounterLabel.Location = new System.Drawing.Point(194, 25);
-            this.roundCounterLabel.Name = "roundCounterLabel";
-            this.roundCounterLabel.Size = new System.Drawing.Size(149, 58);
-            this.roundCounterLabel.TabIndex = 1;
-            this.roundCounterLabel.Text = "0";
-            this.roundCounterLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.infoBox.Location = new System.Drawing.Point(10, 66);
+            this.infoBox.Name = "infoBox";
+            this.infoBox.Size = new System.Drawing.Size(333, 118);
+            this.infoBox.TabIndex = 2;
+            this.infoBox.Text = "";
             // 
             // MainGameWindow
             // 
@@ -240,6 +250,7 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label roundCounterLabel;
+        private System.Windows.Forms.RichTextBox infoBox;
     }
 }
 

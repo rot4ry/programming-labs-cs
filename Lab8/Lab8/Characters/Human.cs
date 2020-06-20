@@ -16,8 +16,8 @@ namespace Lab8
         public bool isSoldier { get; set; } = false;
         public bool isCheckedThisRound { get; set; } = false;
 
-        private Image image = Lab8.Properties.Resources.human;
 
+        private Image image = Lab8.Properties.Resources.human;
         public Human(double money, Point coords, string charType = "human")
         {
             Money = money;
@@ -42,12 +42,12 @@ namespace Lab8
             this.Size = new Size(40, 40);
             this.SizeMode = PictureBoxSizeMode.StretchImage;
         }
-
         public void MoveTo(Point point)
         {
             this.Coords = point;
             this.Location = Coords;
         }
+            
     }
 }
 
